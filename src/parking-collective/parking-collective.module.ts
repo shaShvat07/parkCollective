@@ -3,11 +3,11 @@ import { ParkingCollectiveService } from './parking-collective.service';
 import { ParkingCollectiveController } from './parking-collective.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ParkingCollectiveSchema } from './schema/parking-colletive-schema';
-
+import { ParkingCollective } from './schema/parking-colletive-schema';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: 'ParkingCollective', schema: ParkingCollectiveSchema },
+      { name: ParkingCollective.name, schema: ParkingCollectiveSchema },
     ]),
   ],
   controllers: [ParkingCollectiveController],

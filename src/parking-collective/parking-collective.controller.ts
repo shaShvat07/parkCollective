@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { ParkingCollectiveService } from './parking-collective.service';
 import { ParkingCollective } from './schema/parking-colletive-schema';
 import { CreateParkingCollectiveDto } from './dto/create-parking-collective.dto';
@@ -10,9 +10,8 @@ export class ParkingCollectiveController {
   ) {}
 
   @Post()
-  async createPark(
-    @Body() createParkingCollectiveDto: CreateParkingCollectiveDto,
-  ): Promise<ParkingCollective> {
+  async create(@Body() createParkingCollectiveDto: CreateParkingCollectiveDto) {
+    console.log('Received DTO:', createParkingCollectiveDto);
     return this.parkingCollectiveService.create(createParkingCollectiveDto);
   }
 
@@ -21,28 +20,13 @@ export class ParkingCollectiveController {
     return this.parkingCollectiveService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.parkingCollectiveService.findOne(+id);
-  // }
+  @Get(':id')
+  async getOnePark(@Param('id') id: string): Promise<ParkingCollective> {
+    return this.parkingCollectiveService.findOne(id);
+  }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateParkingCollectiveDto: UpdateParkingCollectiveDto,
-  // ) {
-  //   return this.parkingCollectiveService.update(
-  //     +id,
-  //     updateParkingCollectiveDto,
-  //   );
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.parkingCollectiveService.remove(+id);
-  // }
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return this.parkingCollectiveService.remove(id);
+  }
 }
-
-// function findAll() {
-//   throw new Error('Function not implemented.');
-// }

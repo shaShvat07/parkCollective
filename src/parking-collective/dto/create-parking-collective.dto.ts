@@ -1,5 +1,6 @@
 export class CreateParkingCollectiveDto {
-  readonly parkingLevel: string;
-  readonly isAttachedToBuilding: boolean;
-  readonly editingLocked: boolean;
+  _id: string;
+  parkingLevel: string;
+  isAttachedToBuilding: boolean;
+  editingLocked: boolean;
 }

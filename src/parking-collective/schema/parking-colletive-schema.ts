@@ -14,7 +14,7 @@ export class ParkingCollective extends Document {
   @Prop({ default: true })
   isAttachedToBuilding: boolean;
 
-  @Prop({ default: true })
+  @Prop({ default: false })
   editingLocked: boolean;
 }
 

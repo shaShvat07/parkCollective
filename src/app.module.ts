@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ParkingCollectiveModule } from './parking-collective/parking-collective.module';
+import { ProjectUnitModule } from './project-unit/project-unit.module';
 import 'dotenv/config';
 // console.log(process.env.DB_URI);
 @Module({
@@ -14,6 +15,7 @@ import 'dotenv/config';
       isGlobal: true,
     }),
     ParkingCollectiveModule,
+    ProjectUnitModule,
     MongooseModule.forRoot(process.env.DB_URI),
   ],
   controllers: [AppController],
