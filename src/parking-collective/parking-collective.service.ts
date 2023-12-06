@@ -6,7 +6,7 @@ import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { CommonMethods } from 'src/common/utils/common';
-// import { UpdateParkingCollectiveDto } from './dto/update-parking-collective.dto';
+import { UpdateParkingCollectiveDto } from './dto/update-parking-collective.dto';
 @Injectable()
 export class ParkingCollectiveService {
   constructor(
@@ -51,20 +51,20 @@ export class ParkingCollectiveService {
     }
     return { message: `Parking unit with ID ${id} removed successfully` };
   }
-  // async update(
-  //   id: string,
-  //   updateParkingCollectiveDto: UpdateParkingCollectiveDto,
-  // ): Promise<ParkingCollective> {
-  //   const parking = await this.ParkingCollectiveModel.findById(id);
-  //   if (!parking) {
-  //     throw new BadRequestException(
-  //       CommonMethods.getErrorMsg('Parking not found'),
-  //     );
-  //   }
-  //   return this.ParkingCollectiveModel.findByIdAndUpdate(
-  //     id,
-  //     updateParkingCollectiveDto,
-  //     { new: true },
-  //   );
-  // }
+  async update(
+    id: string,
+    updateParkingCollectiveDto: UpdateParkingCollectiveDto,
+  ): Promise<ParkingCollective> {
+    const parking = await this.ParkingCollectiveModel.findById(id);
+    if (!parking) {
+      throw new BadRequestException(
+        CommonMethods.getErrorMsg('Parking not found'),
+      );
+    }
+    return this.ParkingCollectiveModel.findByIdAndUpdate(
+      id,
+      updateParkingCollectiveDto,
+      { new: true },
+    );
+  }
 }
