@@ -16,6 +16,38 @@ export class ParkingCollective extends Document {
 
   @Prop({ default: false })
   editingLocked: boolean;
+
+  @Prop()
+  buildingId: string;
+  
+  @Prop()
+  orgId: string;
+  
+  @Prop()
+  projectId: string;
+  
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({
+    type: Map,
+    of: {
+      parkingType: String,
+      isCovered: Boolean,
+      prefix: String,
+      unitCount: Number,
+    },
+    _id: false,
+  })
+  sequencing: Map<
+    string,
+    {
+      parkingType: string;
+      isCovered: boolean;
+      prefix: string;
+      unitCount: number;
+    }
+  >;
 }
 
 export const ParkingCollectiveSchema = SchemaFactory.createForClass(ParkingCollective);
