@@ -182,7 +182,6 @@ export const ErrorMessages = {
   parC_1001: 'Please fill out mandatory fields',
   parC_1002: 'Exceeds maximum length of 5 characters.',
   parC_1003: 'Parking Collective not found',
-
 };
 
 export const successMessages = {
