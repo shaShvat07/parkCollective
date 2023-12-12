@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Controller,
   Get,
@@ -6,11 +7,17 @@ import {
   Param,
   Delete,
   Patch,
+  HttpCode,
+  HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ParkingCollectiveService } from './parking-collective.service';
 import { ParkingCollective } from './schema/parking-colletive-schema';
 import { CreateParkingCollectiveDto } from './dto/create-parking-collective.dto';
 import { UpdateParkingCollectiveDto } from './dto/update-parking-collective.dto';
+import { SuccessResponseDtoNew } from 'src/common/dtos/success-response-new.dto';
+import { validateAndTransformDto } from '../common/utils/validation-utils';
+
 //path is passed on as a direct arg.
 @Controller('parking-collective')
 export class ParkingCollectiveController {
@@ -19,31 +26,71 @@ export class ParkingCollectiveController {
   ) {}
 
   @Post()
-  async create(@Body() createParkingCollectiveDto: CreateParkingCollectiveDto) {
+  @HttpCode(HttpStatus.OK)
+  async create(
+    @Query('orgId') orgId: string,
+    @Query('projectId') projectId: string,
+    @Body() createParkingCollectiveDto: CreateParkingCollectiveDto,
+  ) {
     // console.log('Received DTO:', createParkingCollectiveDto);
-    return this.parkingCollectiveService.create(createParkingCollectiveDto);
+    await validateAndTransformDto(
+      CreateParkingCollectiveDto,
+      createParkingCollectiveDto,
+    );
+    const parking = await this.parkingCollectiveService.create(
+      orgId,
+      projectId,
+      createParkingCollectiveDto,
+    );
+    return SuccessResponseDtoNew.getFilledResponseObjectAllArgs(
+      parking,
+      'Parking Collective created successfully',
+      null,
+    );
   }
 
-  @Get()
-  async getAllPark(): Promise<ParkingCollective[]> {
-    return this.parkingCollectiveService.findAll();
+  @Get(':projectId')
+  async getAllPark(
+    @Param('projectId') projectId: string,
+    @Query() query: { groupBy?: string },
+  ) {
+    const parking = await this.parkingCollectiveService.findAll(
+      projectId,
+      query,
+    );
+    return parking;
+    // return SuccessResponseDtoNew.getPaginatedFilledResponseObjectAllArgs(
+    //   parking,
+    //   'All Parking Collective fetched successfully',
+    //   null,
+    // );
   }
 
-  @Get(':id')
-  async getOnePark(@Param('id') id: string): Promise<ParkingCollective> {
-    return this.parkingCollectiveService.findOne(id);
+  @Get(':orgId/:id')
+  async getOnePark(@Param('orgId') orgId: string, @Param('id') id: string) {
+    const parking = await this.parkingCollectiveService.findOne(orgId, id);
+    return SuccessResponseDtoNew.getFilledResponseObjectAllArgs(
+      parking,
+      'Parking Collective fetched successfully',
+      null,
+    );
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.parkingCollectiveService.remove(id);
+  @Delete(':orgId/:id')
+  async remove(@Param('orgId') orgId: string, @Param('id') id: string) {
+    return this.parkingCollectiveService.remove(orgId, id);
   }
 
-  @Patch(':id')
+  @Patch(':orgId/:id')
   async update(
+    @Param('orgId') orgId: string,
     @Param('id') id: string,
     @Body() updateParkingCollectiveDto: UpdateParkingCollectiveDto,
   ): Promise<ParkingCollective> {
-    return this.parkingCollectiveService.update(id, updateParkingCollectiveDto);
+    return this.parkingCollectiveService.update(
+      orgId,
+      id,
+      updateParkingCollectiveDto,
+    );
   }
 }

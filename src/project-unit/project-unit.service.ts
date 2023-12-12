@@ -2,14 +2,14 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateProjectUnitDto } from './dto/create-project-unit.dto';
 import { UpdateProjectUnitDto } from './dto/update-project-unit.dto';
 import { CommonMethods } from '../common/utils/common';
-// import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../logger/logger.service';
 import { ProjectUnitRepository } from './repository/project-unit.repo';
 
 @Injectable()
 export class ProjectUnitService {
   constructor(private readonly projectUnitRepository: ProjectUnitRepository) {}
 
-  // logger: LoggerService = new LoggerService();
+  logger: LoggerService = new LoggerService();
 
   async create(
     orgId: string,

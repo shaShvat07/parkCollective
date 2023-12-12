@@ -4,6 +4,7 @@ import { ParkingCollectiveController } from './parking-collective.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ParkingCollectiveSchema } from './schema/parking-colletive-schema';
 import { ParkingCollective } from './schema/parking-colletive-schema';
+import { ParkingCollectiveRepository } from './repositry/parking-collective.repo';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -11,6 +12,6 @@ import { ParkingCollective } from './schema/parking-colletive-schema';
     ]),
   ],
   controllers: [ParkingCollectiveController],
-  providers: [ParkingCollectiveService],
+  providers: [ParkingCollectiveService, ParkingCollectiveRepository],
 })
 export class ParkingCollectiveModule {}
