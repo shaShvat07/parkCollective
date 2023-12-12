@@ -2,56 +2,72 @@ import {
   IsNotEmpty,
   IsString,
   IsBoolean,
+  IsNumber,
+  ValidateNested,
+  IsDefined,
   Max,
   Min,
-  IsNumber,
-  IsInt,
 } from 'class-validator';
-// import { CommonMethods } from 'src/common/utils/common';
+import { Type } from 'class-transformer';
 
-export class CreateParkingCollectiveDto {
-  @IsString({ message: 'Unit Name should be string' })
-  @IsNotEmpty({ message: 'parking level required' })
-  parkingLevel: string;
-  @IsNotEmpty()
-  @IsBoolean({ message: 'Unit Name should be Boolean' })
-  isAttachedToBuilding: boolean;
-  @IsNotEmpty()
-  @IsBoolean({ message: 'Unit Name should be Boolean' })
-  editingLocked: boolean;
-  @IsNotEmpty()
-  // @IsDecimal({}, { message: 'Unit Name should be Decimal' })
-  @Min(0, { message: 'Unit Name should be greater than 0' })
-  @Max(1000, { message: 'Unit Name should be less than 1000' })
-  @IsNumber({}, { message: 'Unit Name should be number' })
-  buildingId: number;
-  @IsNotEmpty()
-  @IsString({ message: 'Unit Name should be string' })
-  orgId: string;
-  @IsNotEmpty()
-  @IsString({ message: 'Unit Name should be string' })
-  projectId: string;
-  @IsNotEmpty()
-  @IsBoolean({ message: 'Unit Name should be Boolean' })
-  isActive: boolean;
-  sequencing: Record<string, SequencingEntry>;
+class ParkingLevel {
+  @IsNotEmpty({ message: 'Parking Type is required' })
+  @IsString({ message: 'Parking Type should be a string' })
+  parkingType: string;
+  @IsNotEmpty({ message: 'Is Covered  is required' })
+  @IsBoolean({ message: 'Is Covered should be a boolean' })
+  isCovered: boolean;
+  @IsNotEmpty({ message: 'Prefix is required' })
+  @IsString({ message: 'Prefix should be a string' })
+  prefix: string;
+  @Max(1000, { message: 'Unit Count should be less than 1000' })
+  @Min(1, { message: 'Unit Count should be greater than 0' })
+  @IsNumber({}, { message: 'Unit Count should be a number' })
+  @IsNotEmpty({ message: 'Unit Count is required' })
+  unitCount: number;
 }
 
-export class SequencingEntry {
-  @IsNotEmpty()
-  @IsString({ message: 'Unit Name should be string' })
-  parkingType: string;
+class SequencingEntry {
+  @ValidateNested()
+  @Type(() => ParkingLevel)
+  level1: ParkingLevel;
 
-  @IsNotEmpty()
-  @IsBoolean({ message: 'Unit Name should be Boolean' })
-  isCovered: boolean;
+  @ValidateNested()
+  @Type(() => ParkingLevel)
+  level2: ParkingLevel;
+}
 
-  @IsNotEmpty()
-  @IsString({ message: 'Unit Name should be string' })
-  prefix: string;
+export class CreateParkingCollectiveDto {
+  @IsString({ message: 'Parking Level should be a string' })
+  @IsNotEmpty({ message: 'Parking Level is required' })
+  parkingLevel: string;
 
-  // @IsInt({ message: CommonMethods.getErrorMsgCombinedString('parC_1003') })
-  @IsNotEmpty({ message: 'Number cannot be empty' })
-  @IsInt({ message: 'Invalid number' })
-  unitCount: number;
+  @IsNotEmpty({ message: 'Parking Type is required' })
+  @IsBoolean({ message: 'Attached to Building should be a boolean' })
+  isAttachedToBuilding: boolean;
+
+  @IsNotEmpty({ message: 'Editing Locked is required' })
+  @IsBoolean({ message: 'Editing Locked should be a boolean' })
+  editingLocked: boolean;
+
+  @IsNotEmpty({ message: 'Building ID is required' })
+  @IsString({ message: 'Building ID should be a string' })
+  buildingId: string;
+
+  @IsNotEmpty({ message: 'Organization ID is required' })
+  @IsString({ message: 'Organization ID should be a string' })
+  orgId: string;
+
+  @IsNotEmpty({ message: 'Project ID is required' })
+  @IsString({ message: 'Project ID should be a string' })
+  projectId: string;
+
+  @IsNotEmpty({ message: 'Is Active is required' })
+  @IsBoolean({ message: 'Is Active should be a boolean' })
+  isActive: boolean;
+
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => SequencingEntry)
+  sequencing: SequencingEntry;
 }

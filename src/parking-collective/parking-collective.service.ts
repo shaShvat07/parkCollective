@@ -57,17 +57,13 @@ export class ParkingCollectiveService {
     // @Body(new ValidationPipe({ transform: true, whitelist: true }))
     park: CreateParkingCollectiveDto,
   ) {
-    try {
-      // await this.validateParkingTypeandNum(park);
-      const parking = await this.parkingCollectiveRepo.create(
-        orgId,
-        projectId,
-        park,
-      );
-      return parking;
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+    // await this.validateParkingTypeandNum(park);
+    const parking = await this.parkingCollectiveRepo.create(
+      orgId,
+      projectId,
+      park,
+    );
+    return parking;
   }
   async findOne(orgId: string, id: string) {
     const parking = await this.parkingCollectiveRepo.findOne(orgId, id);
