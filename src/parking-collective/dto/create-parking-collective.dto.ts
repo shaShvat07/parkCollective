@@ -7,6 +7,7 @@ import {
   IsDefined,
   Max,
   Min,
+  IsInstance,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -14,12 +15,15 @@ class ParkingLevel {
   @IsNotEmpty({ message: 'Parking Type is required' })
   @IsString({ message: 'Parking Type should be a string' })
   parkingType: string;
-  @IsNotEmpty({ message: 'Is Covered  is required' })
+
+  @IsNotEmpty({ message: 'Is Covered is required' })
   @IsBoolean({ message: 'Is Covered should be a boolean' })
   isCovered: boolean;
+
   @IsNotEmpty({ message: 'Prefix is required' })
   @IsString({ message: 'Prefix should be a string' })
   prefix: string;
+
   @Max(1000, { message: 'Unit Count should be less than 1000' })
   @Min(1, { message: 'Unit Count should be greater than 0' })
   @IsNumber({}, { message: 'Unit Count should be a number' })
@@ -27,22 +31,20 @@ class ParkingLevel {
   unitCount: number;
 }
 
-class SequencingEntry {
-  @ValidateNested()
-  @Type(() => ParkingLevel)
-  level1: ParkingLevel;
-
-  @ValidateNested()
-  @Type(() => ParkingLevel)
-  level2: ParkingLevel;
-}
+// class SequencingEntry {
+//   @IsDefined({ message: 'Sequencing Entry is required' })
+//   @IsInstance(Map, { message: 'Sequencing Entry should be a Map' })
+//   @ValidateNested({ each: true })
+//   @Type(() => ParkingLevel)
+//   levels: Map<string, ParkingLevel>;
+// }
 
 export class CreateParkingCollectiveDto {
   @IsString({ message: 'Parking Level should be a string' })
   @IsNotEmpty({ message: 'Parking Level is required' })
   parkingLevel: string;
 
-  @IsNotEmpty({ message: 'Parking Type is required' })
+  @IsNotEmpty({ message: 'Attached to Building is required' })
   @IsBoolean({ message: 'Attached to Building should be a boolean' })
   isAttachedToBuilding: boolean;
 
@@ -66,8 +68,9 @@ export class CreateParkingCollectiveDto {
   @IsBoolean({ message: 'Is Active should be a boolean' })
   isActive: boolean;
 
-  @IsDefined()
+  @IsDefined({ message: 'Sequencing Entry is required' })
+  @IsInstance(Map, { message: 'Sequencing Entry should be a Map' })
   @ValidateNested({ each: true })
-  @Type(() => SequencingEntry)
-  sequencing: SequencingEntry;
+  @Type(() => ParkingLevel)
+  sequencing: Map<string, ParkingLevel>;
 }
