@@ -1,12 +1,12 @@
 import { ErrorMessages } from './error-messages';
 import { ApplicationConstants } from '../application-contants';
 import { ErrorResponseDto } from '../dtos/error-response.dto';
-// import { LoggerService } from '../../logger/logger.service';
+import { LoggerService } from '../../logger/logger.service';
 import { BadRequestException } from '@nestjs/common';
 
 const countryCodes = ['91', '+91'];
 
-// const logger: LoggerService = new LoggerService();
+const logger: LoggerService = new LoggerService();
 export const CommonMethods = {
   getErrorMsg(code: string) {
     return ErrorResponseDto.getFilledResponseObjectAllArgs(
@@ -24,9 +24,9 @@ export const CommonMethods = {
       /:.*[^ ] /,
       replaceableArgument,
     );
-    // logger.debug(
-    //   'getErrorMsgWithVariableArguments String Formed = ' + stringFormed,
-    // );
+    logger.debug(
+      'getErrorMsgWithVariableArguments String Formed = ' + stringFormed,
+    );
     return ErrorResponseDto.getFilledResponseObjectAllArgs(
       null,
       stringFormed,

@@ -24,7 +24,7 @@ export class ParkingCollective extends Document {
   orgId: string;
   
   @Prop()
-  projectId: string;
+  projectUnitId: string;
   
   @Prop({ default: true })
   isActive: boolean;

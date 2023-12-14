@@ -14,13 +14,16 @@ import * as mongoose from 'mongoose';
 import { CommonMethods } from 'src/common/utils/common';
 import { UpdateParkingCollectiveDto } from './dto/update-parking-collective.dto';
 import { ParkingCollectiveRepository } from './repositry/parking-collective.repo';
+import { ProjectUnitService } from '../project-unit/project-unit.service';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class ParkingCollectiveService {
   constructor(
     private readonly parkingCollectiveRepo: ParkingCollectiveRepository,
+    private readonly projectUnitService: ProjectUnitService,
   ) {}
-
+  logger: LoggerService = new LoggerService();
   async findAll(projectId: string, params: { groupBy?: string }) {
     if (params.groupBy) {
       const parking_unit = await this.parkingCollectiveRepo.findAll(projectId);
@@ -28,7 +31,6 @@ export class ParkingCollectiveService {
         parking_unit,
         params.groupBy,
       );
-      // console.log(groupedParking);
       const groupedParkArray = Object.keys(groupedParking).map((key) => ({
         [params.groupBy]: key,
         items: groupedParking[key],
@@ -38,26 +40,13 @@ export class ParkingCollectiveService {
       return await this.parkingCollectiveRepo.findAll(projectId);
     }
   }
-  // async create(
-  //   orgId: string,
-  //   projectId: string,
-  //   park: CreateParkingCollectiveDto,
-  // ) {
-  //   await this.validateParkingTypeandNum(park);
-  //   const parking = await this.parkingCollectiveRepo.create(
-  //     orgId,
-  //     projectId,
-  //     park,
-  //   );
-  //   return parking;
-  // }
+
   async create(
     orgId: string,
     projectId: string,
-    // @Body(new ValidationPipe({ transform: true, whitelist: true }))
     park: CreateParkingCollectiveDto,
   ) {
-    // await this.validateParkingTypeandNum(park);
+    await this.validateProjectUnitId(park);
     const parking = await this.parkingCollectiveRepo.create(
       orgId,
       projectId,
@@ -65,6 +54,7 @@ export class ParkingCollectiveService {
     );
     return parking;
   }
+
   async findOne(orgId: string, id: string) {
     const parking = await this.parkingCollectiveRepo.findOne(orgId, id);
     if (!parking) {
@@ -113,9 +103,24 @@ export class ParkingCollectiveService {
     }
     return updatedParking;
   }
+  private async validateProjectUnitId(createPark: CreateParkingCollectiveDto) {
+    const projectUnit = await this.projectUnitService.findOne(
+      createPark.orgId,
+      createPark.projectUnitId,
+    );
+    if (!projectUnit) {
+      throw new BadRequestException(
+        CommonMethods.getErrorMsg(`ProjectUnitId is not found in the database`),
+      );
+    }
+  }
 
   // VALIDATION CRITERIA
-  // private validateProperty(value: any, expectedType: string, propName: string) {
+  // private async validateProperty(
+  //   value: any,
+  //   expectedType: string,
+  //   propName: string,
+  // ) {
   //   //Empty data check
   //   if (value === undefined || value === null || value === '') {
   //     throw new BadRequestException(
@@ -132,53 +137,52 @@ export class ParkingCollectiveService {
   //   }
   // }
 
-  private validateUnitCount(unitCount: number, propName: string) {
-    if (isNaN(unitCount) || unitCount < 0 || unitCount > 1000) {
-      throw new BadRequestException(
-        CommonMethods.getErrorMsg(
-          `${propName} should be a number between 0 and 1000`,
-        ),
-      );
-    }
-  }
+  // private validateUnitCount(unitCount: number, propName: string) {
+  //   if (isNaN(unitCount) || unitCount < 0 || unitCount > 1000) {
+  //     throw new BadRequestException(
+  //       CommonMethods.getErrorMsg(
+  //         `${propName} should be a number between 0 and 1000`,
+  //       ),
+  //     );
+  //   }
+  // }
 
   // private async validateParkingTypeandNum(
   //   createPark: CreateParkingCollectiveDto,
   // ) {
-  //   // this.validateProperty(createPark.parkingLevel, 'string', 'Parking level');
-  //   // this.validateProperty(
-  //   //   createPark.isAttachedToBuilding,
-  //   //   'boolean',
-  //   //   'isAttachedToBuilding',
-  //   // );
-  //   // this.validateProperty(createPark.editingLocked, 'boolean', 'editingLocked');
-  //   // this.validateProperty(createPark.buildingId, 'string', 'buildingId');
-  //   // this.validateProperty(createPark.orgId, 'string', 'orgId');
-  //   // this.validateProperty(createPark.projectId, 'string', 'projectId');
-  //   // this.validateProperty(createPark.isActive, 'boolean', 'isActive');
-  //   // this.validateProperty(createPark.sequencing, 'object', 'sequencing');
+  // this.validateProperty(createPark.parkingLevel, 'string', 'Parking level');
+  // this.validateProperty(
+  //   createPark.isAttachedToBuilding,
+  //   'boolean',
+  //   'isAttachedToBuilding',
+  // );
+  // this.validateProperty(createPark.editingLocked, 'boolean', 'editingLocked');
+  // this.validateProperty(createPark.buildingId, 'string', 'buildingId');
+  // this.validateProperty(createPark.orgId, 'string', 'orgId');
+  // this.validateProperty(createPark.projectId, 'string', 'projectId');
+  // this.validateProperty(createPark.isActive, 'boolean', 'isActive');
 
-  //   // Additional validation for the sequencing map
-  //   Object.keys(createPark.sequencing).forEach((key) => {
-  //     const entry = createPark.sequencing[key];
-  //     this.validateProperty(entry, 'object', `sequencing > level: ${key}`);
-  //     this.validateProperty(
-  //       entry.parkingType,
-  //       'string',
-  //       `sequencing > level: ${key} > parkingType`,
-  //     );
-  //     this.validateProperty(
-  //       entry.isCovered,
-  //       'boolean',
-  //       `sequencing > level: ${key} > isCovered`,
-  //     );
-  //     this.validateProperty(
-  //       entry.prefix,
-  //       'string',
-  //       `sequencing > level: ${key} > prefix`,
-  //     );
-  //     // this.validateUnitCount(entry.unitCount, `sequencing.${key}.unitCount`);
-  //   });
+  // Additional validation for the sequencing map
+  // Object.keys(createPark.sequencing).forEach((key) => {
+  //   const entry = createPark.sequencing[key];
+  //   this.validateProperty(entry, 'object', `sequencing > level: ${key}`);
+  //   this.validateProperty(
+  //     entry.parkingType,
+  //     'string',
+  //     `sequencing > level: ${key} > parkingType`,
+  //   );
+  //   this.validateProperty(
+  //     entry.isCovered,
+  //     'boolean',
+  //     `sequencing > level: ${key} > isCovered`,
+  //   );
+  //   this.validateProperty(
+  //     entry.prefix,
+  //     'string',
+  //     `sequencing > level: ${key} > prefix`,
+  //   );
+  //   // this.validateUnitCount(entry.unitCount, `sequencing.${key}.unitCount`);
+  // });
   // }
 
   // item sort

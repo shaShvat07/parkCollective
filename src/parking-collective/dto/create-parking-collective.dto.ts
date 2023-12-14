@@ -64,6 +64,10 @@ export class CreateParkingCollectiveDto {
   @IsString({ message: 'Project ID should be a string' })
   projectId: string;
 
+  @IsNotEmpty({ message: 'Project Unit ID is not present' })
+  @IsString({ message: 'Project Unit ID should be a string' })
+  projectUnitId: string;
+
   @IsNotEmpty({ message: 'Is Active is required' })
   @IsBoolean({ message: 'Is Active should be a boolean' })
   isActive: boolean;
