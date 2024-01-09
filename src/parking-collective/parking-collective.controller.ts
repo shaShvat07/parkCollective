@@ -15,14 +15,15 @@ import { ParkingCollectiveService } from './parking-collective.service';
 import { ParkingCollective } from './schema/parking-colletive-schema';
 import { CreateParkingCollectiveDto } from './dto/create-parking-collective.dto';
 import { UpdateParkingCollectiveDto } from './dto/update-parking-collective.dto';
-import { SuccessResponseDtoNew } from 'src/common/dtos/success-response-new.dto';
 import { validateAndTransformDto } from '../common/utils/validation-utils';
-
+import { SuccessResponseDtoNew } from '../common/dtos/success-response-new.dto';
+import { ChatGPTService } from '../chat-gpt/chat-gpt.service'; // Adjust the path
 //path is passed on as a direct arg.
 @Controller('parking-collective')
 export class ParkingCollectiveController {
   constructor(
     private readonly parkingCollectiveService: ParkingCollectiveService,
+    private readonly chatGPTService: ChatGPTService,
   ) {}
 
   @Post()
@@ -32,7 +33,7 @@ export class ParkingCollectiveController {
     @Query('projectId') projectId: string,
     @Body() createParkingCollectiveDto: CreateParkingCollectiveDto,
   ) {
-    // console.log('Received DTO:', createParkingCollectiveDto);
+    console.log('Received DTO:', createParkingCollectiveDto);
     await validateAndTransformDto(
       CreateParkingCollectiveDto,
       createParkingCollectiveDto,
@@ -42,6 +43,9 @@ export class ParkingCollectiveController {
       projectId,
       createParkingCollectiveDto,
     );
+    // const chatGPTResponse = await this.chatGPTService.getChatGPTResponse(
+    //   'Your prompt to ChatGPT goes here',
+    // );
     return SuccessResponseDtoNew.getFilledResponseObjectAllArgs(
       parking,
       'Parking Collective created successfully',
@@ -50,7 +54,7 @@ export class ParkingCollectiveController {
   }
 
   @Get(':projectId')
-  async getAllPark(
+  async findAll(
     @Param('projectId') projectId: string,
     @Query() query: { groupBy?: string },
   ) {
@@ -67,7 +71,7 @@ export class ParkingCollectiveController {
   }
 
   @Get(':orgId/:id')
-  async getOnePark(@Param('orgId') orgId: string, @Param('id') id: string) {
+  async findOne(@Param('orgId') orgId: string, @Param('id') id: string) {
     const parking = await this.parkingCollectiveService.findOne(orgId, id);
     return SuccessResponseDtoNew.getFilledResponseObjectAllArgs(
       parking,

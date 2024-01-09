@@ -30,6 +30,7 @@ export class SuccessResponseDtoNew {
     successResponseDtoNew.data = { items: dataPassed };
     successResponseDtoNew.message = messagePassed;
     successResponseDtoNew.code = codePassed;
+    console.log('success mey ghush gaye :)');
     return successResponseDtoNew;
   }
 

@@ -155,7 +155,7 @@ export const ErrorMessages = {
   strapi_1002: 'Something went wrong',
   grp_1010: 'passed field parameter does not exist',
 
-  prjU_1001: 'Please enter valid Unit Name',
+  prjU_1001: 'Is Active should be a boolean',
   prjU_1002: 'Please select Unit type',
   prjU_1003: 'Please enter valid Super Build up area',
   prjU_1004: 'Please enter valid Carpet area',

@@ -3,13 +3,12 @@ import {
   IsString,
   IsBoolean,
   IsNumber,
-  ValidateNested,
-  IsDefined,
+  // ValidateNested,
   Max,
   Min,
-  IsInstance,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { CommonMethods } from '../../common/utils/common';
+// import { Type } from 'class-transformer';
 
 class ParkingLevel {
   @IsNotEmpty({ message: 'Parking Type is required' })
@@ -40,6 +39,8 @@ class ParkingLevel {
 // }
 
 export class CreateParkingCollectiveDto {
+  _id: string;
+
   @IsString({ message: 'Parking Level should be a string' })
   @IsNotEmpty({ message: 'Parking Level is required' })
   parkingLevel: string;
@@ -64,17 +65,12 @@ export class CreateParkingCollectiveDto {
   @IsString({ message: 'Project ID should be a string' })
   projectId: string;
 
-  @IsNotEmpty({ message: 'Project Unit ID is not present' })
-  @IsString({ message: 'Project Unit ID should be a string' })
-  projectUnitId: string;
-
   @IsNotEmpty({ message: 'Is Active is required' })
-  @IsBoolean({ message: 'Is Active should be a boolean' })
+  @IsBoolean({ message: CommonMethods.getErrorMsgCombinedString('prjU_1001') })
   isActive: boolean;
 
-  @IsDefined({ message: 'Sequencing Entry is required' })
-  @IsInstance(Map, { message: 'Sequencing Entry should be a Map' })
-  @ValidateNested({ each: true })
-  @Type(() => ParkingLevel)
-  sequencing: Map<string, ParkingLevel>;
+  // @IsNotEmpty({ message: 'Sequencing is required' })
+  // @ValidateNested({ each: true })
+  // @Type(() => ParkingLevel)
+  sequencing: { [key: string]: ParkingLevel };
 }

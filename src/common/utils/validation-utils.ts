@@ -22,6 +22,8 @@ export async function validateAndTransformDto<T extends Record<string, any>>(
     messagesWithCode: string[],
   ) {
     const messageWithCode: string = messagesWithCode[0];
+    // logger.debug('logger bhai : ' + );
+
     const code = messageWithCode
       .split(ApplicationConstants.SEPARATOR_SYMBOL)[0]
       .trim();
@@ -32,13 +34,13 @@ export async function validateAndTransformDto<T extends Record<string, any>>(
       process.env.NODE_ENV != ApplicationConstants.PROD_ENVIRONMENT_KEY
         ? messagesWithCode
         : null;
+
     return ErrorResponseDto.getFilledResponseObjectAllArgs(
       debugData,
       message,
       code,
     );
   }
-
   if (errors.length > 0) {
     const errorMessages = errors.map(
       (error) => error.constraints[Object.keys(error.constraints)[0]],
